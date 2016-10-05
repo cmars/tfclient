@@ -1,8 +1,9 @@
 package main
 
 import (
-	"encoding/json"
+	_ "encoding/base64"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -42,7 +43,8 @@ func main() {
 		},
 		Inputs: map[string]*tfcore.TensorProto{
 			"images": &tfcore.TensorProto{
-				TensorContent: data,
+				Dtype:     tfcore.DataType_DT_STRING,
+				StringVal: [][]byte{data},
 				TensorShape: &tfcore.TensorShapeProto{
 					Dim: []*tfcore.TensorShapeProto_Dim{{Size: 1}},
 				},
@@ -53,6 +55,24 @@ func main() {
 		log.Fatalf("predict call failed: %v", err)
 	}
 
-	data, err = json.MarshalIndent(resp, "", "    ")
-	os.Stdout.Write(data)
+	classes := resp.Outputs["classes"].StringVal
+	scores := resp.Outputs["scores"].FloatVal
+
+	for i := 0; i < len(classes) && i < len(scores); i++ {
+		class := string(classes[i])
+		/*
+			if classDec, err := base64.StdEncoding.DecodeString(class); err != nil {
+				log.Println("failed to decode class %q: %v", string(classes[i]))
+			} else {
+				class = string(classDec)
+			}
+		*/
+		fmt.Printf("%-30s %f\n", class, scores[i])
+	}
+	/*
+		fmt.Println(resp.Outputs["classes"].GetTensorShape().String())
+		fmt.Println(resp.Outputs["scores"].GetTensorShape().String())
+		data, err = json.MarshalIndent(resp, "", "    ")
+		os.Stdout.Write(data)
+	*/
 }
