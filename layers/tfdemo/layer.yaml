@@ -1,4 +1,4 @@
 includes:
     - layer:basic
-    - interface:tensorflow-serving-api
+    - interface:tf-inception-api
     - interface:http

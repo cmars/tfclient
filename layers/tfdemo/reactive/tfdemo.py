@@ -13,10 +13,10 @@ def install_tfdemo():
     set_state('tfdemo.installed')
 
 
-@when('tensorflow.available', 'tfdemo.installed')
+@when('client.available', 'tfdemo.installed')
 def tensorflow_available(tf):
     addrs = tf.addrs()
-    if data_changed('tfdemo.addr', addrs) and addrs:
+    if data_changed('tfdemo.addrs', addrs) and addrs:
         render(source="tfdemo.service",
             target="/etc/systemd/service/tfdemo.service",
             owner="root",
@@ -33,6 +33,6 @@ def tensorflow_available(tf):
 
 @when('website.available')
 def website_available(w):
-    w.configure(8080)
     hookenv.open_port(8080)
+    w.configure(8080)
     remove_state('website.available')

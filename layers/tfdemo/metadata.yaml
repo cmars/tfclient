@@ -10,8 +10,10 @@ tags:
   - misc
 subordinate: false
 provides:
-  website
+  website:
     interface: http
 requires:
-  image-classifier:
-    interface: tensorflow-serving-api
+  client:
+    interface: tf-inception-api
+series:
+  - xenial

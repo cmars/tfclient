@@ -5,6 +5,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/tfwebapp -addr {{ addr }}
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
