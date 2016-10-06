@@ -29,7 +29,7 @@ class TfInceptionProvides(RelationBase):
 
     def configure(self, port):
         relation_info = {
-            'host': hookenv.unit_get('public-address'),
+            'host': hookenv.unit_get('private-address'),
             'port': port,
         }
         self.set_remote(**relation_info)

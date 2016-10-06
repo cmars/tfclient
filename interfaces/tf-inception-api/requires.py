@@ -5,7 +5,7 @@ from charms.reactive import RelationBase, scopes, hook
 
 
 class TfInceptionRequires(RelationBase):
-    scope = scopes.SERVICE
+    scope = scopes.UNIT
 
     @hook('{requires:tf-inception-api}-relation-{joined,changed}')
     def joined(self):
@@ -41,6 +41,6 @@ class TfInceptionRequires(RelationBase):
             host = conv.get_remote('host')
             port = conv.get_remote('port')
             if host and port:
-                addr = '%s:%d' % (host, port)
-                addrs.append(addr)
-        return addrs
+                addr = '%s:%s' % (host, port)
+                addrs.add(addr)
+        return list(addrs)
