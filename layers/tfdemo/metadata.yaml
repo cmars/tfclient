@@ -1,0 +1,17 @@
+name: tfdemo
+summary: Demo image classification with remote Tensorflow model
+maintainer: Casey Marshall <casey.marshall@canonical.com>
+description: |
+  This demo web application displays a form where you can paste in the
+  URL to an image to be classified by a remote Tensorflow model.
+tags:
+  # Replace "misc" with one or more whitelisted tags from this list:
+  # https://jujucharms.com/docs/stable/authors-charm-metadata
+  - misc
+subordinate: false
+provides:
+  website
+    interface: http
+requires:
+  image-classifier:
+    interface: tensorflow-serving-api

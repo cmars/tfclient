@@ -1,0 +1,10 @@
+[Unit]
+Description=Demo image classification with remote Tensorflow model
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/tfwebapp -addr {{ addr }}
+
+[Install]
+WantedBy=multi-user.target
