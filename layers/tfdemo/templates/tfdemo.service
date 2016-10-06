@@ -4,7 +4,7 @@ After=syslog.target network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/tfwebapp -addr {{ addr }}
+ExecStart=/usr/bin/tfwebapp -addr {{ addr }} -samples {{ samples }}
 Restart=always
 RestartSec=1
 
