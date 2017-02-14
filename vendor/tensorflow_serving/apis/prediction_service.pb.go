@@ -24,13 +24,19 @@ var _ grpc.ClientConn
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion3
+const _ = grpc.SupportPackageIsVersion4
 
 // Client API for PredictionService service
 
 type PredictionServiceClient interface {
+	// Classify.
+	Classify(ctx context.Context, in *ClassificationRequest, opts ...grpc.CallOption) (*ClassificationResponse, error)
+	// Regress.
+	Regress(ctx context.Context, in *RegressionRequest, opts ...grpc.CallOption) (*RegressionResponse, error)
 	// Predict -- provides access to loaded TensorFlow model.
 	Predict(ctx context.Context, in *PredictRequest, opts ...grpc.CallOption) (*PredictResponse, error)
+	// GetModelMetadata - provides access to metadata for loaded models.
+	GetModelMetadata(ctx context.Context, in *GetModelMetadataRequest, opts ...grpc.CallOption) (*GetModelMetadataResponse, error)
 }
 
 type predictionServiceClient struct {
@@ -39,6 +45,24 @@ type predictionServiceClient struct {
 
 func NewPredictionServiceClient(cc *grpc.ClientConn) PredictionServiceClient {
 	return &predictionServiceClient{cc}
+}
+
+func (c *predictionServiceClient) Classify(ctx context.Context, in *ClassificationRequest, opts ...grpc.CallOption) (*ClassificationResponse, error) {
+	out := new(ClassificationResponse)
+	err := grpc.Invoke(ctx, "/tensorflow.serving.PredictionService/Classify", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *predictionServiceClient) Regress(ctx context.Context, in *RegressionRequest, opts ...grpc.CallOption) (*RegressionResponse, error) {
+	out := new(RegressionResponse)
+	err := grpc.Invoke(ctx, "/tensorflow.serving.PredictionService/Regress", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *predictionServiceClient) Predict(ctx context.Context, in *PredictRequest, opts ...grpc.CallOption) (*PredictResponse, error) {
@@ -50,15 +74,66 @@ func (c *predictionServiceClient) Predict(ctx context.Context, in *PredictReques
 	return out, nil
 }
 
+func (c *predictionServiceClient) GetModelMetadata(ctx context.Context, in *GetModelMetadataRequest, opts ...grpc.CallOption) (*GetModelMetadataResponse, error) {
+	out := new(GetModelMetadataResponse)
+	err := grpc.Invoke(ctx, "/tensorflow.serving.PredictionService/GetModelMetadata", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for PredictionService service
 
 type PredictionServiceServer interface {
+	// Classify.
+	Classify(context.Context, *ClassificationRequest) (*ClassificationResponse, error)
+	// Regress.
+	Regress(context.Context, *RegressionRequest) (*RegressionResponse, error)
 	// Predict -- provides access to loaded TensorFlow model.
 	Predict(context.Context, *PredictRequest) (*PredictResponse, error)
+	// GetModelMetadata - provides access to metadata for loaded models.
+	GetModelMetadata(context.Context, *GetModelMetadataRequest) (*GetModelMetadataResponse, error)
 }
 
 func RegisterPredictionServiceServer(s *grpc.Server, srv PredictionServiceServer) {
 	s.RegisterService(&_PredictionService_serviceDesc, srv)
+}
+
+func _PredictionService_Classify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClassificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PredictionServiceServer).Classify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tensorflow.serving.PredictionService/Classify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PredictionServiceServer).Classify(ctx, req.(*ClassificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PredictionService_Regress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegressionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PredictionServiceServer).Regress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tensorflow.serving.PredictionService/Regress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PredictionServiceServer).Regress(ctx, req.(*RegressionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PredictionService_Predict_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -79,30 +154,68 @@ func _PredictionService_Predict_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PredictionService_GetModelMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetModelMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PredictionServiceServer).GetModelMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tensorflow.serving.PredictionService/GetModelMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PredictionServiceServer).GetModelMetadata(ctx, req.(*GetModelMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _PredictionService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "tensorflow.serving.PredictionService",
 	HandlerType: (*PredictionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Classify",
+			Handler:    _PredictionService_Classify_Handler,
+		},
+		{
+			MethodName: "Regress",
+			Handler:    _PredictionService_Regress_Handler,
+		},
+		{
 			MethodName: "Predict",
 			Handler:    _PredictionService_Predict_Handler,
 		},
+		{
+			MethodName: "GetModelMetadata",
+			Handler:    _PredictionService_GetModelMetadata_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: fileDescriptor1,
+	Metadata: "tensorflow_serving/apis/prediction_service.proto",
 }
 
-func init() { proto.RegisterFile("tensorflow_serving/apis/prediction_service.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("tensorflow_serving/apis/prediction_service.proto", fileDescriptor4) }
 
-var fileDescriptor1 = []byte{
-	// 135 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x32, 0x28, 0x49, 0xcd, 0x2b,
-	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0x4f,
-	0x2c, 0xc8, 0x2c, 0xd6, 0x2f, 0x28, 0x4a, 0x4d, 0xc9, 0x4c, 0x2e, 0xc9, 0xcc, 0xcf, 0x83, 0x88,
-	0x27, 0xa7, 0xea, 0x15, 0x14, 0xe5, 0x97, 0xe4, 0x0b, 0x09, 0x21, 0x74, 0xe8, 0x41, 0x75, 0x48,
-	0xa9, 0x12, 0x30, 0x05, 0xa2, 0xd5, 0x28, 0x9d, 0x4b, 0x30, 0x00, 0x6e, 0x6c, 0x30, 0xc4, 0x54,
-	0xa1, 0x20, 0x2e, 0x76, 0xa8, 0xa0, 0x90, 0x92, 0x1e, 0xa6, 0xd9, 0x7a, 0x50, 0xc9, 0xa0, 0xd4,
-	0xc2, 0xd2, 0xd4, 0xe2, 0x12, 0x29, 0x65, 0xbc, 0x6a, 0x8a, 0x0b, 0xf2, 0xf3, 0x8a, 0x53, 0x9d,
-	0x98, 0x7f, 0x30, 0x32, 0x26, 0xb1, 0x81, 0x2d, 0x35, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x06,
-	0x71, 0xa0, 0x11, 0xe3, 0x00, 0x00, 0x00,
+var fileDescriptor4 = []byte{
+	// 259 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x8c, 0x91, 0x4f, 0x4b, 0xc3, 0x40,
+	0x10, 0xc5, 0x29, 0x05, 0x2b, 0x7b, 0xd2, 0x39, 0xe6, 0xa8, 0x54, 0xfc, 0x53, 0x52, 0xd1, 0x6f,
+	0x60, 0x0f, 0x9e, 0x0a, 0x12, 0x2f, 0xde, 0xc2, 0x9a, 0x4c, 0xc3, 0x42, 0xb2, 0xbb, 0xee, 0x8c,
+	0x8a, 0x9f, 0xc3, 0x2f, 0xeb, 0x51, 0xea, 0x4e, 0x22, 0x6a, 0x62, 0x73, 0xdd, 0x7d, 0xef, 0x37,
+	0xef, 0xf1, 0xd4, 0x25, 0xa3, 0x25, 0x17, 0x36, 0xb5, 0x7b, 0xcd, 0x09, 0xc3, 0x8b, 0xb1, 0xd5,
+	0x52, 0x7b, 0x43, 0x4b, 0x1f, 0xb0, 0x34, 0x05, 0x1b, 0x67, 0xe3, 0x7b, 0x81, 0xa9, 0x0f, 0x8e,
+	0x1d, 0xc0, 0xb7, 0x23, 0x15, 0x47, 0xb2, 0x18, 0xa2, 0x14, 0xb5, 0x26, 0x32, 0x1b, 0x53, 0xe8,
+	0x2d, 0x29, 0x12, 0x92, 0xc1, 0x9b, 0x15, 0x72, 0xde, 0xb8, 0x12, 0xeb, 0xbc, 0x41, 0xd6, 0xa5,
+	0x66, 0x2d, 0x8e, 0xf9, 0x8e, 0x94, 0x22, 0x3b, 0x1d, 0x92, 0x05, 0xac, 0x02, 0x12, 0x75, 0x11,
+	0xae, 0xde, 0xa7, 0xea, 0xf0, 0xae, 0x6b, 0x78, 0x1f, 0x0b, 0x82, 0x56, 0xfb, 0xab, 0x18, 0xf8,
+	0x0d, 0xce, 0xd2, 0xbf, 0x3d, 0xd3, 0xd5, 0x8f, 0x3a, 0x19, 0x3e, 0x3d, 0x23, 0x71, 0x72, 0x3e,
+	0x46, 0x4a, 0xde, 0x59, 0x42, 0x78, 0x50, 0xb3, 0x2c, 0x86, 0x81, 0x79, 0x9f, 0x2d, 0xeb, 0x92,
+	0xb6, 0xf4, 0x93, 0x5d, 0x32, 0x21, 0x67, 0x6a, 0x26, 0x8d, 0xe0, 0xa8, 0xcf, 0x22, 0x9f, 0x2d,
+	0xf6, 0xf8, 0x5f, 0x8d, 0x30, 0x1b, 0x75, 0x70, 0x8b, 0xbc, 0xde, 0x4e, 0xb2, 0x96, 0x45, 0xe0,
+	0xa2, 0xcf, 0xf8, 0x5b, 0xd5, 0x5e, 0x59, 0x8c, 0x13, 0xc7, 0x73, 0x37, 0xd3, 0x8f, 0xc9, 0xe4,
+	0x71, 0xef, 0x6b, 0xa1, 0xeb, 0xcf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xcd, 0x3c, 0x45, 0x95, 0x9a,
+	0x02, 0x00, 0x00,
 }
