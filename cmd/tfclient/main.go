@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/cmars/tfclient"
+	"github.com/ilaripih/tfclient"
 )
 
 var image = flag.String("image", "", "image file to classify")
@@ -32,7 +32,7 @@ func main() {
 		log.Fatalf("cannot read %q: %v", *image, err)
 	}
 
-	predictions, err := client.Predict(imgdata)
+	predictions, err := client.Predict("inception", imgdata)
 	if err != nil {
 		log.Fatalf("predict failed: %v", err)
 	}

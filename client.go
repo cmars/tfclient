@@ -31,10 +31,10 @@ func NewClient(addr string) (*PredictionClient, error) {
 	return &PredictionClient{rpcConn: conn, svcConn: c}, nil
 }
 
-func (c *PredictionClient) Predict(imgdata []byte) ([]Prediction, error) {
+func (c *PredictionClient) Predict(modelName string, imgdata []byte) ([]Prediction, error) {
 	resp, err := c.svcConn.Predict(context.Background(), &tf.PredictRequest{
 		ModelSpec: &tf.ModelSpec{
-			Name: "inception",
+			Name: modelName,
 		},
 		Inputs: map[string]*tfcore.TensorProto{
 			"images": &tfcore.TensorProto{

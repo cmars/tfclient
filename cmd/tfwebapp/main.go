@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cmars/tfclient"
+	"github.com/ilaripih/tfclient"
 )
 
 var addr = flag.String("addr", "", "remote address")
@@ -158,7 +158,7 @@ func page(w http.ResponseWriter, r *http.Request) {
 		fail(err)
 		return
 	}
-	predictions, err := client.Predict(imgdata)
+	predictions, err := client.Predict("inception", imgdata)
 	if err != nil {
 		fail(err)
 		return
