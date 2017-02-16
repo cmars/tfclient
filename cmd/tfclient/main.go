@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ilaripih/tfclient"
+	"github.com/cmars/tfclient"
 )
 
 var image = flag.String("image", "", "image file to classify")

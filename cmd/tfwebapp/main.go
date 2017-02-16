@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ilaripih/tfclient"
+	"github.com/cmars/tfclient"
 )
 
 var addr = flag.String("addr", "", "remote address")
